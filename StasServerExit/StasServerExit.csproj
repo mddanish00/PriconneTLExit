@@ -7,7 +7,7 @@
 		Copyright (c) 2026 mddanish00
 		Copyright (c) 2023 Kevga
 	</Copyright>
-	<Description>BepInEx plugin to automatically close StasServer when closing Priconne.</Description>
+	<Description>BepInEx plugin to automatically close StasServer launched by StasServerEndpoint when closing Priconne.</Description>
 	<TargetFramework>net6.0</TargetFramework>
 	<OutputType>Library</OutputType>
 	<RootNamespace>StasServerExit</RootNamespace>
@@ -22,13 +22,6 @@
 	<ItemGroup>
 		<None Include="..\LICENSE" Pack="true" PackagePath=""/>
 	</ItemGroup>
-
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    	<OutputPath>..\build\Debug\</OutputPath>
-  	</PropertyGroup>
-  	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    	<OutputPath>..\build\Release\</OutputPath>
-  	</PropertyGroup>
 
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp" Publicize="True">
