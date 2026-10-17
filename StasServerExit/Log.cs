@@ -1,5 +1,5 @@
 ﻿/*
-    PriconneTLStasServerExit is a BepInEx plugin to automatically close StasServer when closing Priconne.
+    PriconneTLStasServerExit is a BepInEx plugin to automatically close StasServer launched by StasServerEndpoint when closing Priconne.
     Copyright (C) 2026  mddanishh00
     Copyright (C) 2023  Kevga
 
