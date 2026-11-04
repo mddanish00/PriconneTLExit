@@ -15,14 +15,15 @@ jobs:
       tl_version: ${{ steps.get-version.outputs.tl_version }}
       current_tl_version: ${{ steps.get-version.outputs.current_tl_version }}
       repo_tag: ${{ steps.resolve-inputs.outputs.repo_tag }}
-      endpoint_repo_tag: ${{ steps.resolve-inputs.outputs.endpoint_repo_tag }}
+      stas_server_endpoint_repo_tag: ${{ steps.resolve-inputs.outputs.stas_server_endpoint_repo_tag }}
+      localgateway_endpoint_repo_tag: ${{ steps.resolve-inputs.outputs.localgateway_endpoint_repo_tag }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache PriconneReTL version
         id: cache-version
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: PriconneReTL_version
           key: PriconneReTL-version-restore-${{ github.run_id }}
@@ -64,16 +65,18 @@ jobs:
         id: resolve-inputs
         run: |
           repo_tag=$(gh release view --repo mddanish00/PriconneTLStasServerExit --json tagName --jq .tagName)
-          endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-StasServerEndpoint --json tagName --jq .tagName)
+          stas_server_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-StasServerEndpoint --json tagName --jq .tagName)
+          localgateway_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint --json tagName --jq .tagName)
           echo "repo_tag=$repo_tag" >> $GITHUB_OUTPUT
-          echo "endpoint_repo_tag=$endpoint_repo_tag" >> $GITHUB_OUTPUT
+          echo "stas_server_endpoint_repo_tag=$stas_server_endpoint_repo_tag" >> $GITHUB_OUTPUT
+          echo "localgateway_endpoint_repo_tag=$localgateway_endpoint_repo_tag" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Save to cache
         if: steps.compare-versions.outputs.should_build == 'true'
         id: save-to-cache
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: PriconneReTL_version
           key: PriconneReTL-version-${{ steps.get-version.outputs.tl_version }}
@@ -87,7 +90,8 @@ jobs:
     uses: ./.github/workflows/build-and-upload-release.yml
     with:
       repo_tag: ${{ needs.check_version.outputs.repo_tag }}
-      endpoint_repo_tag: ${{ needs.check_version.outputs.endpoint_repo_tag }}
+      stas_server_endpoint_repo_tag: ${{ needs.check_version.outputs.stas_server_endpoint_repo_tag }}
+      localgateway_endpoint_repo_tag: ${{ needs.check_version.outputs.localgateway_endpoint_repo_tag }}
       tl_version: ${{ needs.check_version.outputs.tl_version }}
     secrets: inherit
 

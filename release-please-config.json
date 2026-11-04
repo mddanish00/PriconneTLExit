@@ -16,6 +16,15 @@
         {
           "type": "generic",
           "path": "StasServerExit/Plugin.cs"
+        },
+        {
+          "type": "xml",
+          "path": "LocalGatewayExit/LocalGatewayExit.csproj",
+          "xpath": "/*/PropertyGroup/Version"
+        },
+        {
+          "type": "generic",
+          "path": "LocalGatewayExit/Plugin.cs"
         }
       ]
     }

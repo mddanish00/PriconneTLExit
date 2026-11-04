@@ -1,5 +1,5 @@
 ﻿/*
-    PriconneTLLiteLLMExit is a BepInEx plugin to automatically close LiteLLM launched by LiteLLMEndpoint when closing Priconne.
+    PriconneTLLocalGatewayExit is a BepInEx plugin to automatically close LocalGateway launched by LocalGatewayEndpoint when closing Priconne.
     Copyright (C) 2026  mddanishh00
     Copyright (C) 2023  Kevga
 
@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using BepInEx.Logging;
 
-namespace LiteLLMExit;
+namespace LocalGatewayExit;
 
 public class Log
 {

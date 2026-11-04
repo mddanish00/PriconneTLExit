@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StasServerExit", "StasServerExit\StasServerExit.csproj", "{0A92B506-7E9C-4BB0-B2A9-8D11CC65F81C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteLLMExit", "LiteLLMExit\LiteLLMExit.csproj", "{95B909B1-95A6-4522-91BF-D3A3562E6D0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalGatewayExit", "LocalGatewayExit\LocalGatewayExit.csproj", "{95B909B1-95A6-4522-91BF-D3A3562E6D0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

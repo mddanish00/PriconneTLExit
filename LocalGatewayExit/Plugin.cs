@@ -1,5 +1,5 @@
 ﻿/*
-    PriconneTLLiteLLMExit is a BepInEx plugin to automatically close LiteLLM launched by LiteLLMEndpoint when closing Priconne.
+    PriconneTLLocalGatewayExit is a BepInEx plugin to automatically close LocalGateway launched by LocalGatewayEndpoint when closing Priconne.
     Copyright (C) 2026  mddanishh00
     Copyright (C) 2023  Kevga
 
@@ -23,20 +23,20 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using Cute;
 using HarmonyLib;
-using LiteLLM;
+using LocalGateway;
 
-namespace LiteLLMExit;
+namespace LocalGatewayExit;
 
 
-[BepInPlugin("LiteLLMExit", "PriconneTLLiteLLMExit by mddanish00", "1.1.0")] //x-release-please-version
+[BepInPlugin("LocalGatewayExit", "PriconneTLLocalGatewayExit by mddanish00", "1.1.0")] //x-release-please-version
 [BepInProcess("PrincessConnectReDive.exe")]
 public class Plugin : BasePlugin
 {
-    private readonly Harmony harmony = new("com.github.mddanish00.PriconneTLLiteLLMExit");
+    private readonly Harmony harmony = new("com.github.mddanish00.PriconneTLLocalGatewayExit");
 
     public override void Load()
     {
-        LiteLLMExit.Log.BieLogger = Log;
+        LocalGatewayExit.Log.BieLogger = Log;
 
         try
         {
@@ -44,45 +44,45 @@ public class Plugin : BasePlugin
         }
         catch (Exception e)
         {
-            LiteLLMExit.Log.Warn("Failed to set console encoding to UTF8. Japanese characters may not display correctly.");
-            LiteLLMExit.Log.Warn(e);
+            LocalGatewayExit.Log.Warn("Failed to set console encoding to UTF8. Japanese characters may not display correctly.");
+            LocalGatewayExit.Log.Warn(e);
         }
 
         var sw = Stopwatch.StartNew();
         harmony.PatchAll();
         sw.Stop();
-        LiteLLMExit.Log.Debug($"Patching took {sw.ElapsedMilliseconds}ms");
-        LiteLLMExit.Log.Info("LiteLLMExit loaded!");
+        LocalGatewayExit.Log.Debug($"Patching took {sw.ElapsedMilliseconds}ms");
+        LocalGatewayExit.Log.Info("LocalGatewayExit loaded!");
     }
 
     public override bool Unload()
     {
-        LiteLLMExit.Log.Info("Shutting down...");
+        LocalGatewayExit.Log.Info("Shutting down...");
         harmony.UnpatchSelf();
         return true;
     }
 }
 
-[HarmonyPatch(typeof(LiteLLMEndpoint), "StartProcess")]
-public class LiteLLMExitPatch
+[HarmonyPatch(typeof(LocalGatewayEndpoint), "StartProcess")]
+public class LocalGatewayExitPatch
 {
     internal static Process? process;
 
     public static void Postfix(Process ___process)
     {
-        Log.Info("LiteLLMEndpoint.StartProcess");
+        Log.Info("LocalGatewayEndpoint.StartProcess");
         process = ___process;
     }
 }
 
 [HarmonyPatch(typeof(Toolbox), nameof(Toolbox.ApplicationQuit))]
-public class LiteLLMExitPatch2
+public class LocalGatewayExitPatch2
 {
     public static void Prefix()
     {
         Log.Info("Application quitting");
-        LiteLLMExitPatch.process?.Kill();
-        LiteLLMExitPatch.process = null;
+        LocalGatewayExitPatch.process?.Kill();
+        LocalGatewayExitPatch.process = null;
     }
 }
 

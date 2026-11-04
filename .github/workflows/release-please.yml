@@ -16,7 +16,7 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +28,8 @@ jobs:
     permissions:
       contents: read # Required for gh release view
     outputs:
-      endpoint_repo_tag: ${{ steps.get_version.outputs.endpoint_repo_tag }}
+      stas_server_endpoint_repo_tag: ${{ steps.get_version.outputs.stas_server_endpoint_repo_tag }}
+      localgateway_endpoint_repo_tag: ${{ steps.get_version.outputs.localgateway_endpoint_repo_tag }}
       tl_version: ${{ steps.get_version.outputs.tl_version }}
     steps:
       - name: Get latest version
@@ -36,9 +37,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-StasServerEndpoint --json tagName -q .tagName)
+          stas_server_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-StasServerEndpoint --json tagName -q .tagName)
+          localgateway_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint --json tagName -q .tagName)
           tl_version=$(gh release view --repo ImaterialC/PriconneRe-TL --json tagName -q .tagName)
-          echo "endpoint_repo_tag=$endpoint_repo_tag" >> $GITHUB_OUTPUT
+          echo "stas_server_endpoint_repo_tag=$stas_server_endpoint_repo_tag" >> $GITHUB_OUTPUT
+          echo "localgateway_endpoint_repo_tag=$localgateway_endpoint_repo_tag" >> $GITHUB_OUTPUT
           echo "tl_version=$tl_version" >> $GITHUB_OUTPUT
 
 
@@ -50,7 +53,8 @@ jobs:
     uses: ./.github/workflows/build-and-upload-release.yml
     with:
       repo_tag: ${{ needs.release-please.outputs.tag_name }}
-      endpoint_repo_tag: ${{ needs.get-version-external.outputs.endpoint_repo_tag }}
+      stas_server_endpoint_repo_tag: ${{ needs.get-version-external.outputs.stas_server_endpoint_repo_tag }}
+      localgateway_endpoint_repo_tag: ${{ needs.get-version-external.outputs.localgateway_endpoint_repo_tag }}
       tl_version: ${{ needs.get-version-external.outputs.tl_version }}
     secrets: inherit
   
@@ -62,7 +66,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Delete releases except latest
         env:

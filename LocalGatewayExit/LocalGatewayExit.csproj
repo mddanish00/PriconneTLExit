@@ -7,11 +7,11 @@
 		Copyright (c) 2026 mddanish00
 		Copyright (c) 2023 Kevga
 	</Copyright>
-	<Description>BepInEx plugin to automatically close LiteLLM that launched by LiteLLMEndpoint when closing Priconne.</Description>
+	<Description>BepInEx plugin to automatically close LocalGateway that launched by LocalGatewayEndpoint when closing Priconne.</Description>
 	<TargetFramework>net6.0</TargetFramework>
 	<OutputType>Library</OutputType>
-	<RootNamespace>LiteLLMExit</RootNamespace>
-	<AssemblyName>PriconneTLLiteLLMExit</AssemblyName>
+	<RootNamespace>LocalGatewayExit</RootNamespace>
+	<AssemblyName>PriconneTLLocalGatewayExit</AssemblyName>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>enable</Nullable>
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -36,8 +36,8 @@
 			<HintPath>..\libs\core\XUnity.Common.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-		<Reference Include="LiteLLM">
-			<HintPath>..\libs\plugins\XUnity.AutoTranslator\Translators\LiteLLM.dll</HintPath>
+		<Reference Include="LocalGateway">
+			<HintPath>..\libs\plugins\XUnity.AutoTranslator\Translators\LocalGateway.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="0Harmony">
