@@ -28,7 +28,7 @@ using LocalGateway;
 namespace LocalGatewayExit;
 
 
-[BepInPlugin("LocalGatewayExit", "PriconneTLLocalGatewayExit by mddanish00", "1.1.0")] //x-release-please-version
+[BepInPlugin("LocalGatewayExit", "PriconneTLLocalGatewayExit by mddanish00", "1.2.0")] //x-release-please-version
 [BepInProcess("PrincessConnectReDive.exe")]
 public class Plugin : BasePlugin
 {
