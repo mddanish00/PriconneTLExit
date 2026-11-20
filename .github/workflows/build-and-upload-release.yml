@@ -84,7 +84,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                 name: stas-server-endpoint-artifacts
-                path: build/Release/net6.0/StasServer.dll
+                path: StasServerEndpoint/bin/Release/net6.0/StasServer.dll
                 retention-days: 1
     
     build-LocalGatewayEndpoint:
@@ -126,7 +126,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                 name: localgateway-endpoint-artifacts
-                path: LocalGateway/bin/Release/net6.0/LocalGateway.dll
+                path: LocalGatewayEndpoint/bin/Release/net6.0/LocalGateway.dll
                 retention-days: 1
     
     build-StasServerExit-release:
