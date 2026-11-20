@@ -64,7 +64,7 @@ jobs:
         if: steps.compare-versions.outputs.should_build == 'true'
         id: resolve-inputs
         run: |
-          repo_tag=$(gh release view --repo mddanish00/PriconneTLStasServerExit --json tagName --jq .tagName)
+          repo_tag=$(gh release view --repo mddanish00/PriconneTLExit --json tagName --jq .tagName)
           stas_server_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-StasServerEndpoint --json tagName --jq .tagName)
           localgateway_endpoint_repo_tag=$(gh release view --repo mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint --json tagName --jq .tagName)
           echo "repo_tag=$repo_tag" >> $GITHUB_OUTPUT

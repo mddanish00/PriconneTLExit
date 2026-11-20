@@ -1,32 +1,31 @@
-# PriconneTLStasServerExit
+# PriconneTLExit
 
-A BepInEx plugin to automatically close StasServer when closing the game Priconne.
+BepInEx plugins to automatically close StasServer and Local Gateway when closing the game Priconne.
 
-This plugin is a must-have for those who use [XUnity-AutoTranslator-StasServerEndpoint](https://github.com/mddanish00/XUnity-AutoTranslator-StasServerEndpoint) with [PriconneRe-TL](https://github.com/ImaterialC/PriconneRe-TL).
+This plugin is a must-have for those who use [XUnity-AutoTranslator-StasServerEndpoint](https://github.com/mddanish00/XUnity-AutoTranslator-StasServerEndpoint) and [XUnity-AutoTranslator-LocalGatewayEndpoint](https://github.com/mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint) with [PriconneRe-TL](https://github.com/ImaterialC/PriconneRe-TL).
 
 This plugin is based on SugoiExitPatch from [PriconneTLFixup](httpshttps://github.com/Kevga/PriconneTLFixup).
 
 ## Installation
 
-> The Release Archive include a copy of compiled XUnity-AutoTranslator-StasServerEndpoint to make sure DLL is built using the same version of PriconneRe-TL.
+> The Release Archive include a copy of compiled Endpoint to make sure DLL is built using the same version of PriconneRe-TL.
 
-
-1. Download the latest `PriconneTLStasServerExit.zip` from the [Releases](https://github.com/mddanish00/PriconneTLStasServerExit/releases/latest).
+1. Download the latest `PriconneTLStasServerExit.zip` or `PriconneTLLocalGatewayExit.zip` from the [Releases](https://github.com/mddanish00/PriconneTLExit/releases/latest).
 2. Locate BepInEx folder. (In patched game directory with PriconneRe-TL)
-3. Extract the archive and copy `PriconneTLStasServerExit.dll` to `BepInEx/plugins`. If already available, overwrite.
-4. Copy `StasServer.dll` to `BepInEx/plugins/XUnity.AutoTranslator/Translators`. If already available, overwrite.
+3. Extract the archive and copy `PriconneTLStasServerExit.dll` or `PriconneTLLocalGatewayExit.dll` to `BepInEx/plugins`. If already available, overwrite.
+4. Copy `StasServer.dll` or `LocalGateway.dll` to `BepInEx/plugins/XUnity.AutoTranslator/Translators`. If already available, overwrite.
 
 ## Development
 
-- Make sure .NET SDK 6 or higher is installed. Recomended to use latest LTS version.
-- A working copy of the game that patched with PriconneRe-TL. Create symslink name `libs` in the root of the project repo that pointed to `BepInEx` folder in the patched game directory.
+- Make sure .NET SDK is installed. Recomended to use latest LTS version.
+- A working copy of the game that patched with PriconneRe-TL. Create symlink name `libs` in the root of the project repo that pointed to `BepInEx` folder in the patched game directory.
 
 ## License
 
-PriconneTLStasServerExit is licensed under GPLv3.
+PriconneTLExit is licensed under GPLv3.
 
-```
-PriconneTLStasServerExit is a BepInEx plugin to automatically close StasServer when closing Priconne.
+```md
+PriconneTLExit is a BepInEx plugin to automatically close StasServer when closing Priconne.
 Copyright (C) 2026  mddanishh00
 Copyright (C) 2023  Kevga
 
@@ -50,11 +49,10 @@ Read the full license in [LICENSE](./LICENSE).
 
 [XUnity-AutoTranslator-StasServerEndpoint](https://github.com/mddanish00/XUnity-AutoTranslator-StasServerEndpoint) is licensed under MIT license but the DLL build that included in this project Release Archive is licensed under GPLv3 same as this project.
 
+[XUnity-AutoTranslator-LocalGatewayEndpoint](https://github.com/mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint) is licensed under MIT license but the DLL build that included in this project Release Archive is licensed under GPLv3 same as this project.
 
 ## Acknowledgement
 
 - Thanks to [MingShiba](https://www.patreon.com/mingshiba) for creating the Sugoi Japanese Toolkit and making high-quality (still machine translation) available to enjoy many untranslated Japanese works.
 
 - Thanks to [Kevga](https://github.com/Kevga) and the rest of PriconneRe-TL team for creating the PriconneRe-TL that enable non-Japanese fans to enjoy Priconne even after Global server shutdown.
-
-
