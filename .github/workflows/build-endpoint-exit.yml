@@ -1,0 +1,130 @@
+on:
+    workflow_call:
+        inputs:
+            repo_tag:
+                description: "The tag of this repository to use"
+                required: true
+                type: string
+            endpoint_repo:
+                description: "The repository of endpoint to use"
+                required: true
+                type: string
+            endpoint_project_name:
+                description: "The name of the endpoint project to build"
+                required: true
+                type: string
+            endpoint_repo_tag:
+                description: "The tag of endpoint repo to use"
+                required: true
+                type: string
+            endpoint_binary_name:
+                description: "The name of the endpoint binary to use"
+                required: true
+                type: string
+            exit_project_name:
+                description: "The name of the exit project to build"
+                required: true
+                type: string
+            exit_binary_name:
+                description: "The name of the exit binary to use"
+                required: true
+                type: string
+            tl_version:
+                description: "The version of PriconneReTL to use for building the release"
+                required: true
+                type: string
+
+name: Build Endpoint and Exit Plugin
+
+jobs:
+    build-endpoint-release:
+        runs-on: windows-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout Endpoint
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ inputs.endpoint_repo_tag }}
+                  repository: ${{ inputs.endpoint_repo }}
+
+            - name: Setup .NET
+              uses: fast-actions/setup-dotnet@v1
+              with:
+                  sdk-version: "lts"
+
+            - name: Retrieve PriconneReTL from cache
+              uses: actions/cache@v6
+              with:
+                  path: PriconneTL_${{ inputs.tl_version }}.zip
+                  key: tl-cache-${{ inputs.tl_version }}
+                  enableCrossOsArchive: true
+                  fail-on-cache-miss: true
+
+            - name: Unzip PriconneReTL
+              run: |
+                  Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
+                  Copy-Item out\BepInEx\core\XUnity.Common.dll libs-il2cpp
+                  Copy-Item out\BepInEx\plugins\XUnity.AutoTranslator\XUnity.AutoTranslator.Plugin.Core.dll libs-il2cpp
+                  Remove-Item -Path out -Recurse -Force
+
+            - name: Build Endpoint
+              run: |
+                dotnet build -c Release -v n -f net6.0 -p:InformationalVersion="${{ inputs.endpoint_repo_tag }} (PriconneReTL: ${{ inputs.tl_version }})"
+
+            - name: Upload the built DLLs as artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                  name: ${{ inputs.endpoint_binary_name }}-endpoint-artifacts
+                  path: ${{ inputs.endpoint_project_name }}/bin/Release/net6.0/${{ inputs.endpoint_binary_name }}.dll
+                  retention-days: 1
+
+    build-exit-release:
+        runs-on: windows-latest
+        needs: build-endpoint-release
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout release
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ inputs.repo_tag }}
+
+            - name: Setup .NET
+              uses: fast-actions/setup-dotnet@v1
+              with:
+                  sdk-version: "lts"
+
+            - name: Retrieve PriconneReTL from cache
+              uses: actions/cache@v6
+              with:
+                  path: PriconneTL_${{ inputs.tl_version }}.zip
+                  key: tl-cache-${{ inputs.tl_version }}
+                  enableCrossOsArchive: true
+                  fail-on-cache-miss: true
+
+            - name: Download Endpoint artifacts
+              uses: actions/download-artifact@v8
+              with:
+                  name: ${{ inputs.endpoint_binary_name }}-endpoint-artifacts
+
+            - name: Unzip PriconneReTL and Setup libs folder
+              run: |
+                  Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
+                  New-Item -Path libs -ItemType Directory
+                  Copy-Item -Path out\BepInEx\core -Destination libs -Recurse
+                  Copy-Item -Path out\BepInEx\plugins -Destination libs -Recurse
+                  Copy-Item -Path out\BepInEx\interop -Destination libs -Recurse
+                  Copy-Item ${{ inputs.endpoint_binary_name }}.dll libs\plugins\XUnity.AutoTranslator\Translators
+                  Remove-Item -Path out -Recurse -Force
+
+            - name: Build release
+              run: |
+                  dotnet build ${{ inputs.exit_project_name }}\${{ inputs.exit_project_name }}.csproj -c Release -p:InformationalVersion="${{ inputs.repo_tag }} (PriconneReTL: ${{ inputs.tl_version }})" -v n
+
+            - name: Upload the built DLLs as artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                  name: ${{ inputs.endpoint_binary_name }}-exit-artifacts
+                  path: ${{ inputs.exit_project_name }}/bin/Release/net6.0/${{ inputs.exit_binary_name }}.dll
+                  retention-days: 1

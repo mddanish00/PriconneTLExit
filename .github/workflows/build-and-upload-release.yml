@@ -45,193 +45,35 @@ jobs:
                   --pattern "PriconneTL_${{ inputs.tl_version }}.zip" \
                   --skip-existing
     
-    build-StasServerEndpoint:
-        runs-on: windows-latest
-        needs: download-PriconneReTL
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout StasServerEndpoint
-              uses: actions/checkout@v7
-              with:
-                ref: ${{ inputs.stas_server_endpoint_repo_tag }}
-                repository: mddanish00/XUnity-AutoTranslator-StasServerEndpoint
-
-            - name: Setup .NET
-              uses: fast-actions/setup-dotnet@v1
-              with:
-                sdk-version: 'lts'
-            
-            - name: Retrieve PriconneReTL from cache
-              uses: actions/cache@v6
-              with:
-                path: PriconneTL_${{ inputs.tl_version }}.zip
-                key: tl-cache-${{ inputs.tl_version }}
-                enableCrossOsArchive: true
-                fail-on-cache-miss: true
-            
-            - name: Unzip PriconneReTL
-              run: |
-                Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
-                Copy-Item out\BepInEx\core\XUnity.Common.dll libs-il2cpp
-                Copy-Item out\BepInEx\plugins\XUnity.AutoTranslator\XUnity.AutoTranslator.Plugin.Core.dll libs-il2cpp
-                Remove-Item -Path out -Recurse -Force
-
-            - name: Build StasServerEndpoint
-              run: dotnet build -c Release -v n -f net6.0
-            
-            - name: Upload the built DLLs as artifacts
-              uses: actions/upload-artifact@v7
-              with:
-                name: stas-server-endpoint-artifacts
-                path: StasServerEndpoint/bin/Release/net6.0/StasServer.dll
-                retention-days: 1
+    build-StasServerEndpoint-and-Exit:
+      needs: download-PriconneReTL
+      uses: ./.github/workflows/build-endpoint-exit.yml
+      with:
+        repo_tag: ${{ inputs.repo_tag }}                                
+        endpoint_repo: mddanish00/XUnity-AutoTranslator-StasServerEndpoint
+        endpoint_repo_tag: ${{ inputs.stas_server_endpoint_repo_tag }}
+        endpoint_binary_name: StasServer
+        endpoint_project_name: StasServerEndpoint
+        exit_binary_name: PriconneTLStasServerExit
+        exit_project_name: StasServerExit
+        tl_version: ${{ inputs.tl_version }}
     
-    build-LocalGatewayEndpoint:
-        runs-on: windows-latest
-        needs: download-PriconneReTL
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout LocalGatewayEndpoint
-              uses: actions/checkout@v7
-              with:
-                ref: ${{ inputs.localgateway_endpoint_repo_tag }}
-                repository: mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint
-
-            - name: Setup .NET
-              uses: fast-actions/setup-dotnet@v1
-              with:
-                sdk-version: 'lts'
-            
-            - name: Retrieve PriconneReTL from cache
-              uses: actions/cache@v6
-              with:
-                path: PriconneTL_${{ inputs.tl_version }}.zip
-                key: tl-cache-${{ inputs.tl_version }}
-                enableCrossOsArchive: true
-                fail-on-cache-miss: true
-            
-            - name: Unzip PriconneReTL
-              run: |
-                Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
-                Copy-Item out\BepInEx\core\XUnity.Common.dll libs-il2cpp
-                Copy-Item out\BepInEx\plugins\XUnity.AutoTranslator\XUnity.AutoTranslator.Plugin.Core.dll libs-il2cpp
-                Remove-Item -Path out -Recurse -Force
-
-            - name: Build LocalGatewayEndpoint
-              run: dotnet build -c Release -v n -f net6.0
-            
-            - name: Upload the built DLLs as artifacts
-              uses: actions/upload-artifact@v7
-              with:
-                name: localgateway-endpoint-artifacts
-                path: LocalGatewayEndpoint/bin/Release/net6.0/LocalGateway.dll
-                retention-days: 1
-    
-    build-StasServerExit-release:
-        runs-on: windows-latest
-        needs: build-StasServerEndpoint
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout release
-              uses: actions/checkout@v7
-              with:
-                ref: ${{ inputs.repo_tag }}
-
-            - name: Setup .NET
-              uses: fast-actions/setup-dotnet@v1
-              with:
-                sdk-version: 'lts'
-            
-            - name: Retrieve PriconneReTL from cache
-              uses: actions/cache@v6
-              with:
-                path: PriconneTL_${{ inputs.tl_version }}.zip
-                key: tl-cache-${{ inputs.tl_version }}
-                enableCrossOsArchive: true
-                fail-on-cache-miss: true
-
-            - name: Download Endpoint artifacts
-              uses: actions/download-artifact@v8
-              with:
-                name: stas-server-endpoint-artifacts
-            
-            - name: Unzip PriconneReTL and Setup libs folder
-              run: |
-                Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
-                New-Item -Path libs -ItemType Directory
-                Copy-Item -Path out\BepInEx\core -Destination libs -Recurse
-                Copy-Item -Path out\BepInEx\plugins -Destination libs -Recurse
-                Copy-Item -Path out\BepInEx\interop -Destination libs -Recurse
-                Copy-Item StasServer.dll libs\plugins\XUnity.AutoTranslator\Translators
-                Remove-Item -Path out -Recurse -Force
-
-            - name: Build release
-              run: |
-                dotnet build StasServerExit/StasServerExit.csproj -c Release -p:InformationalVersion="${{ inputs.repo_tag }} (PriconneReTL: ${{ inputs.tl_version }})" -v n
-
-            - name: Upload the built DLLs as artifacts
-              uses: actions/upload-artifact@v7
-              with:
-                name: stas-server-exit-artifacts
-                path: StasServerExit/bin/Release/net6.0/PriconneTLStasServerExit.dll
-                retention-days: 1
-
-    build-LocalGatewayExit-release:
-        runs-on: windows-latest
-        needs: build-LocalGatewayEndpoint
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout release
-              uses: actions/checkout@v7
-              with:
-                ref: ${{ inputs.repo_tag }}
-
-            - name: Setup .NET
-              uses: fast-actions/setup-dotnet@v1
-              with:
-                sdk-version: 'lts'
-            
-            - name: Retrieve PriconneReTL from cache
-              uses: actions/cache@v6
-              with:
-                path: PriconneTL_${{ inputs.tl_version }}.zip
-                key: tl-cache-${{ inputs.tl_version }}
-                enableCrossOsArchive: true
-                fail-on-cache-miss: true
-
-            - name: Download Endpoint artifacts
-              uses: actions/download-artifact@v8
-              with:
-                name: localgateway-endpoint-artifacts
-            
-            - name: Unzip PriconneReTL and Setup libs folder
-              run: |
-                Expand-Archive -Path PriconneTL_${{ inputs.tl_version }}.zip -DestinationPath out
-                New-Item -Path libs -ItemType Directory
-                Copy-Item -Path out\BepInEx\core -Destination libs -Recurse
-                Copy-Item -Path out\BepInEx\plugins -Destination libs -Recurse
-                Copy-Item -Path out\BepInEx\interop -Destination libs -Recurse
-                Copy-Item LocalGateway.dll libs\plugins\XUnity.AutoTranslator\Translators
-                Remove-Item -Path out -Recurse -Force
-
-            - name: Build release
-              run: |
-                dotnet build LocalGatewayExit/LocalGatewayExit.csproj -c Release -p:InformationalVersion="${{ inputs.repo_tag }} (PriconneReTL: ${{ inputs.tl_version }})" -v n
-
-            - name: Upload the built DLLs as artifacts
-              uses: actions/upload-artifact@v7
-              with:
-                name: localgateway-exit-artifacts
-                path: LocalGatewayExit/bin/Release/net6.0/PriconneTLLocalGatewayExit.dll
-                retention-days: 1
+    build-LocalGatewayEndpoint-and-Exit:
+      needs: download-PriconneReTL
+      uses: ./.github/workflows/build-endpoint-exit.yml
+      with:
+        repo_tag: ${{ inputs.repo_tag }}                                
+        endpoint_repo: mddanish00/XUnity-AutoTranslator-LocalGatewayEndpoint
+        endpoint_repo_tag: ${{ inputs.localgateway_endpoint_repo_tag }}
+        endpoint_binary_name: LocalGateway
+        endpoint_project_name: LocalGatewayEndpoint
+        exit_binary_name: PriconneTLLocalGatewayExit
+        exit_project_name: LocalGatewayExit
+        tl_version: ${{ inputs.tl_version }}
 
     upload-release:
         runs-on: ubuntu-latest
-        needs: [build-StasServerExit-release, build-LocalGatewayExit-release]
+        needs: [build-StasServerEndpoint-and-Exit, build-LocalGatewayEndpoint-and-Exit]
         permissions:
             contents: write
         steps:
